@@ -1,7 +1,7 @@
 from database import sesion_local
 from models import Category, Product, Stock_movement, Supplier
 from datetime import date
-from sqlalchemy import select
+from sqlalchemy import select, update
 
 def create_category(id: int, name: str):
     with sesion_local() as s:
@@ -82,4 +82,25 @@ def get_all_movements():
     
 def get_movements_by_product_id(product_id):
     with sesion_local() as s:
-        stmt = 
+        stmt = select(Stock_movement).where(Stock_movement.product_id == product_id)
+        res = s.execute(stmt).scalars().all()
+        return res
+
+# 3.обновление данных
+
+def rename_category(category_id, new_name):
+    with sesion_local() as s:
+        stmt = update(Category).where(Category.id == category_id).values(name = new_name)
+        s.execute(stmt)
+        s.commit()
+
+def alter_supplier_contanct_data(supplier_id, new_phone, new_email):
+    with sesion_local() as s:
+        stmt = update(Supplier).where(Supplier.id == supplier_id).values(phone=new_phone, email=new_email)
+        s.execute(stmt)
+        s.commit()
+
+def change_purchase_price(product_id, new_price):
+    with sesion_local() as s:
+        stmt = update(Product).where(Product.id == product_id).values(purchase_price=new_price)
+        
