@@ -10,7 +10,6 @@ if DATABASE_URI is None:
 
 engine = create_engine(
     DATABASE_URI,
-    echo=True
 )
 
 sesion_local = sessionmaker(

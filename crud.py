@@ -2,40 +2,59 @@ from database import sesion_local
 from models import Category, Product, Stock_movement, Supplier
 from datetime import date
 from sqlalchemy import select, update, delete
+from sqlalchemy.exc import IntegrityError
 
 def create_category(id: int, name: str):
     with sesion_local() as s:
-        category = Category(id=id, name=name)
-        s.add(category)
-        s.commit()
-        s.refresh(category)
-        return category
+        try:
+            category = Category(id=id, name=name)
+            s.add(category)
+            s.commit()
+            s.refresh(category)
+            return category
+        except IntegrityError as e:
+            s.rollback()
+            raise ValueError('Error: Некорректные данные для создания категории')
+
+        
 
 def create_supplier(id: int, name: str, phone: str, email: str):
     with sesion_local() as s:
-        supplier = Supplier(id=id, name=name, phone=phone, email=email)
-        s.add(supplier)
-        s.commit()
-        s.refresh(supplier)
-        return supplier
+        try:
+            supplier = Supplier(id=id, name=name, phone=phone, email=email)
+            s.add(supplier)
+            s.commit()
+            s.refresh(supplier)
+            return supplier
+        except IntegrityError as e:
+            s.rollback()
+            raise ValueError('Error: Некорректные данные для создания поставщика')
+    
 
 def create_product(id, name, sku, cat_id, sup_id, purchase_price, selling_price, min_qua):
     with sesion_local() as s:
-        pr = Product(id=id, name=name, sku=sku, category_id=cat_id, supplier_id=sup_id, 
-                     purchase_price=purchase_price, selling_price=selling_price, min_quantity=min_qua)
-        s.add(pr)
-        s.commit()
-        s.refresh(pr)
-        return pr
+        try:
+            pr = Product(id=id, name=name, sku=sku, category_id=cat_id, supplier_id=sup_id, 
+                        purchase_price=purchase_price, selling_price=selling_price, min_quantity=min_qua)
+            s.add(pr)
+            s.commit()
+            s.refresh(pr)
+            return pr
+        except IntegrityError as e:
+            s.rollback()
+            raise ValueError('Error: Некорректные данные для создания товара')
     
 def create_movement(id, product_id, movement_type, quantity, coment):
     with sesion_local() as s:
-        mv = Stock_movement(id=id, product_id=product_id, movement_type=movement_type, quantity=quantity, coment=coment)
-        s.add(mv)
-        s.commit()
-        s.refresh(mv)
-        return mv
-    
+        try:
+            mv = Stock_movement(id=id, product_id=product_id, movement_type=movement_type, quantity=quantity, coment=coment)
+            s.add(mv)
+            s.commit()
+            s.refresh(mv)
+            return mv
+        except IntegrityError as e:
+            s.rollback()
+            raise ValueError('Error: Некорректные данные для создания складской операции')    
 def get_all_categories():
     with sesion_local() as s:
         stmt = select(Category)

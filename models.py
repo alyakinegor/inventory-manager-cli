@@ -4,6 +4,8 @@ from sqlalchemy import Integer, Text, CheckConstraint, ForeignKey, Boolean, Date
 from datetime import date
 
 class Category(Base):
+    def __repr__(self):
+        return f'{self.id} | {self.name}'
     __tablename__= 'categories'
     __table_args__ = (
         CheckConstraint('length(name) > 0', name='name_not_empty'),
@@ -13,6 +15,8 @@ class Category(Base):
     # products: Mapped[list['Products']] = relationship(back_populates='category')
 
 class Supplier(Base):
+    def __repr__(self):
+        return f'{self.id} | {self.name} | {self.phone} | {self.email} | {self.is_active} | {self.created_at}'
     __tablename__ = 'suppliers'
     __table_args__ = (
         CheckConstraint('length(name) > 0', name='name_not_empty'),
@@ -25,6 +29,8 @@ class Supplier(Base):
     created_at = mapped_column(Date, server_default=text('CURRENT_DATE'))
 
 class Product(Base):
+    def __repr__(self):
+        return f'{self.id} | {self.name} | {self.sku} | {self.category_id} | {self.supplier_id} | {self.purchase_price} | {self.selling_price} | {self.min_quantity} | {self.is_active} | {self.created_at}'
     __tablename__ = 'products'
     __table_args__ = (
         CheckConstraint('length(name) > 0', name='name_not_empty'),
@@ -46,6 +52,8 @@ class Product(Base):
     # category = relationship(back_populates='products')
 
 class Stock_movement(Base):
+    def __repr__(self):
+        return f'{self.id} | {self.product_id} | {self.movement_type} | {self.quantity} | {self.coment} | {self.created_at}'
     __tablename__ = 'stock_movements'
     __table_args__ = (
         CheckConstraint('movement_type in (\'IN\', \'OUT\', \'ADJUST\')', name='mv_type'),
